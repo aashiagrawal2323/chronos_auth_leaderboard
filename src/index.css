@@ -1,0 +1,284 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #05070c;
+    color: #e2e8f0;
+    overflow-x: hidden;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .font-tech {
+    font-family: 'Chakra Petch', sans-serif;
+  }
+}
+
+/* Subtle CRT Scanline overlay */
+.scanlines {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.03),
+    rgba(0, 255, 0, 0.01),
+    rgba(0, 0, 255, 0.03)
+  );
+  background-size: 100% 3px, 6px 100%;
+  pointer-events: none;
+}
+
+/* Grid overlay */
+.cyber-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+/* Glowing text & borders */
+.glow-cyan {
+  text-shadow: 0 0 10px rgba(6, 182, 212, 0.6), 0 0 20px rgba(6, 182, 212, 0.2);
+}
+
+.glow-purple {
+  text-shadow: 0 0 10px rgba(168, 85, 247, 0.6), 0 0 20px rgba(168, 85, 247, 0.2);
+}
+
+.glow-amber {
+  text-shadow: 0 0 10px rgba(245, 158, 11, 0.6), 0 0 20px rgba(245, 158, 11, 0.2);
+}
+
+.border-glow-cyan {
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.25), inset 0 0 15px rgba(6, 182, 212, 0.05);
+}
+
+.border-glow-purple {
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.25), inset 0 0 15px rgba(168, 85, 247, 0.05);
+}
+
+/* Glitch animation */
+@keyframes subtle-glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-1.5px, 1.5px); }
+  40% { transform: translate(-1px, -1px); }
+  60% { transform: translate(1.5px, 1px); }
+  80% { transform: translate(1px, -1.5px); }
+  100% { transform: translate(0); }
+}
+
+.glitch-hover:hover {
+  animation: subtle-glitch 0.25s infinite;
+}
+
+/* Standalone dynamic text glitch */
+@keyframes glitch-skew {
+  0% { transform: skew(0deg); }
+  10% { transform: skew(-3deg); }
+  20% { transform: skew(2deg); }
+  21% { transform: skew(0deg); }
+  60% { transform: skew(0deg); }
+  61% { transform: skew(5deg); }
+  62% { transform: skew(-2deg); }
+  63% { transform: skew(0deg); }
+  90% { transform: skew(-4deg); }
+  92% { transform: skew(0deg); }
+  100% { transform: skew(0deg); }
+}
+
+@keyframes glitch-anim-1 {
+  0% { clip-path: inset(20% 0 60% 0); transform: translate(-4px, -2px); }
+  20% { clip-path: inset(80% 0 5% 0); transform: translate(4px, 1px); }
+  40% { clip-path: inset(40% 0 45% 0); transform: translate(-3px, 2px); }
+  60% { clip-path: inset(10% 0 75% 0); transform: translate(3px, -2px); }
+  80% { clip-path: inset(50% 0 25% 0); transform: translate(-2px, 1px); }
+  100% { clip-path: inset(20% 0 60% 0); transform: translate(-4px, -2px); }
+}
+
+@keyframes glitch-anim-2 {
+  0% { clip-path: inset(10% 0 80% 0); transform: translate(3px, 2px); }
+  20% { clip-path: inset(70% 0 15% 0); transform: translate(-4px, -1px); }
+  40% { clip-path: inset(30% 0 55% 0); transform: translate(2px, -2px); }
+  60% { clip-path: inset(85% 0 5% 0); transform: translate(-3px, 1px); }
+  80% { clip-path: inset(15% 0 65% 0); transform: translate(4px, -1px); }
+  100% { clip-path: inset(10% 0 80% 0); transform: translate(3px, 2px); }
+}
+
+/* =========================================================
+   CINEMATIC 5-SECOND THEATER TITLE ENTRANCE FX
+   Total Duration: 5.0 seconds
+   Phase 1 (0s - 3.5s [0% - 70%]):
+     Starts massive out of frame scale(6), heavy blur(40px), opacity 0.
+     Slowly zooms in, sharpening toward blur(0px) and opacity 1.
+   Phase 2 (3.5s - 4.2s [70% - 84%]):
+     Impacts center screen at scale(1.0), triggering neon flash,
+     blinding brightness, and intense chromatic flare.
+   Phase 3 (4.2s - 5.0s [84% - 100%]):
+     Slight 3D recoil / bounce (scale 1.05 down to scale 1.0), settling into place.
+   Phase 4 (5.0s onwards):
+     Continuous looping CSS glitch / RGB split activates smoothly.
+   ========================================================= */
+.cinematic-perspective-stage {
+  perspective: 1400px;
+  perspective-origin: 50% 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+@keyframes theater-5s-entrance {
+  /* Phase 1: 0s - 3.5s (0% to 70%) - Massive, blurry glide in */
+  0% {
+    opacity: 0;
+    transform: scale(6) translate3d(0, 0, 300px);
+    filter: blur(40px) brightness(0.1);
+    letter-spacing: 0.6em;
+  }
+  15% {
+    opacity: 0.25;
+    filter: blur(32px) brightness(0.4);
+  }
+  40% {
+    opacity: 0.65;
+    transform: scale(3.2) translate3d(0, 0, 150px);
+    filter: blur(18px) brightness(0.8);
+    letter-spacing: 0.3em;
+  }
+  65% {
+    opacity: 0.95;
+    transform: scale(1.35) translate3d(0, 0, 40px);
+    filter: blur(4px) brightness(1.2);
+    letter-spacing: 0.05em;
+  }
+  /* Phase 2: 3.5s (70%) - Initial impact & extreme chromatic flare */
+  70% {
+    opacity: 1;
+    transform: scale(1) translate3d(0, 0, 0);
+    filter: blur(0px) brightness(2.8) 
+            drop-shadow(0 0 60px rgba(6, 182, 212, 1)) 
+            drop-shadow(0 0 90px rgba(236, 72, 153, 0.95));
+    letter-spacing: -0.02em;
+  }
+  /* Phase 2 Hold: up to 4.2s (84%) */
+  78% {
+    opacity: 1;
+    transform: scale(1.02) translate3d(0, 0, 15px);
+    filter: blur(0px) brightness(2.2) 
+            drop-shadow(0 0 45px rgba(6, 182, 212, 0.9)) 
+            drop-shadow(0 0 70px rgba(236, 72, 153, 0.8));
+    letter-spacing: -0.03em;
+  }
+  84% {
+    opacity: 1;
+    transform: scale(1) translate3d(0, 0, 0);
+    filter: blur(0px) brightness(1.6) 
+            drop-shadow(0 0 35px rgba(6, 182, 212, 0.8));
+    letter-spacing: -0.04em;
+  }
+  /* Phase 3: 4.2s - 5.0s (84% to 100%) - 3D recoil / bounce settling */
+  90% {
+    transform: scale(1.05) translate3d(0, 0, 20px);
+    filter: blur(0px) brightness(1.3) 
+            drop-shadow(0 0 35px rgba(6, 182, 212, 0.7));
+  }
+  96% {
+    transform: scale(0.99) translate3d(0, 0, -5px);
+    filter: blur(0px) brightness(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translate3d(0, 0, 0);
+    filter: blur(0px) brightness(1) drop-shadow(0 0 30px rgba(6, 182, 212, 0.6));
+    letter-spacing: -0.05em;
+  }
+}
+
+/* Phase 2 Neon Flash & Light Pulse (3.5s - 4.2s) */
+@keyframes theater-flare-pulse {
+  0%, 65% {
+    opacity: 0;
+    transform: scale(0.1);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(2.8);
+  }
+  78% {
+    opacity: 0.85;
+    transform: scale(2.4);
+  }
+  84% {
+    opacity: 0.3;
+    transform: scale(3.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(4.0);
+  }
+}
+
+.cinematic-flyin-wrapper {
+  transform-style: preserve-3d;
+  animation: theater-5s-entrance 5.0s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
+  will-change: transform, opacity, filter;
+  position: relative;
+}
+
+.lens-flare-flash {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 260px;
+  height: 260px;
+  margin-top: -130px;
+  margin-left: -130px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(6, 182, 212, 0.85) 30%, rgba(236, 72, 153, 0.6) 55%, transparent 75%);
+  pointer-events: none;
+  mix-blend-mode: screen;
+  animation: theater-flare-pulse 5.0s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
+  z-index: 20;
+}
+
+.glitch-title {
+  position: relative;
+  display: inline-block;
+  /* Phase 4: Delay glitch activation until 5.0s post-entrance */
+  animation: glitch-skew 3s infinite linear alternate-reverse;
+  animation-delay: 5.0s;
+}
+
+.glitch-title::before,
+.glitch-title::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch-title::before {
+  color: #06b6d4;
+  animation: glitch-anim-1 2.5s infinite linear alternate-reverse;
+  animation-delay: 5.0s;
+  z-index: -1;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+.glitch-title::after {
+  color: #ec4899;
+  animation: glitch-anim-2 2s infinite linear alternate-reverse;
+  animation-delay: 5.0s;
+  z-index: -2;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+

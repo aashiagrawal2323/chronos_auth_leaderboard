@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Build Outputs
+dist/
+dist-ssr/
+build/
+*.local
+
+# Environment variables
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+*.log
+
+# Editor & OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# SQLite runtime locks (keeps repo clean)
+*.db-shm
+*.db-wal
