@@ -1,19 +1,29 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Super Sliced';
+  src: url('/fonts/SuperSliced.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   body {
-    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Share Tech', sans-serif;
     background-color: #05070c;
     color: #e2e8f0;
     overflow-x: hidden;
   }
 
-  code, pre, .font-mono {
-    font-family: 'JetBrains Mono', monospace;
+  code, pre, .font-mono,
+  .font-tech,
+  .font-sans {
+    font-family: 'Share Tech', sans-serif;
   }
 
-  .font-tech {
-    font-family: 'Chakra Petch', sans-serif;
+  .font-title {
+    font-family: 'Super Sliced', 'Share Tech', sans-serif;
   }
 }
 
@@ -109,176 +119,514 @@
 }
 
 /* =========================================================
-   CINEMATIC 5-SECOND THEATER TITLE ENTRANCE FX
-   Total Duration: 5.0 seconds
-   Phase 1 (0s - 3.5s [0% - 70%]):
-     Starts massive out of frame scale(6), heavy blur(40px), opacity 0.
-     Slowly zooms in, sharpening toward blur(0px) and opacity 1.
-   Phase 2 (3.5s - 4.2s [70% - 84%]):
-     Impacts center screen at scale(1.0), triggering neon flash,
-     blinding brightness, and intense chromatic flare.
-   Phase 3 (4.2s - 5.0s [84% - 100%]):
-     Slight 3D recoil / bounce (scale 1.05 down to scale 1.0), settling into place.
-   Phase 4 (5.0s onwards):
-     Continuous looping CSS glitch / RGB split activates smoothly.
+   CHRONOS TITLE — locked holographic mark
    ========================================================= */
-.cinematic-perspective-stage {
-  perspective: 1400px;
-  perspective-origin: 50% 50%;
+.chrono-stage {
   position: relative;
+  width: 100%;
+  min-height: 8.5rem;
+  padding: 1.1rem 0 1.4rem;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: visible;
 }
 
-@keyframes theater-5s-entrance {
-  /* Phase 1: 0s - 3.5s (0% to 70%) - Massive, blurry glide in */
-  0% {
-    opacity: 0;
-    transform: scale(6) translate3d(0, 0, 300px);
-    filter: blur(40px) brightness(0.1);
-    letter-spacing: 0.6em;
-  }
-  15% {
-    opacity: 0.25;
-    filter: blur(32px) brightness(0.4);
-  }
-  40% {
-    opacity: 0.65;
-    transform: scale(3.2) translate3d(0, 0, 150px);
-    filter: blur(18px) brightness(0.8);
-    letter-spacing: 0.3em;
-  }
-  65% {
-    opacity: 0.95;
-    transform: scale(1.35) translate3d(0, 0, 40px);
-    filter: blur(4px) brightness(1.2);
-    letter-spacing: 0.05em;
-  }
-  /* Phase 2: 3.5s (70%) - Initial impact & extreme chromatic flare */
-  70% {
-    opacity: 1;
-    transform: scale(1) translate3d(0, 0, 0);
-    filter: blur(0px) brightness(2.8) 
-            drop-shadow(0 0 60px rgba(6, 182, 212, 1)) 
-            drop-shadow(0 0 90px rgba(236, 72, 153, 0.95));
-    letter-spacing: -0.02em;
-  }
-  /* Phase 2 Hold: up to 4.2s (84%) */
-  78% {
-    opacity: 1;
-    transform: scale(1.02) translate3d(0, 0, 15px);
-    filter: blur(0px) brightness(2.2) 
-            drop-shadow(0 0 45px rgba(6, 182, 212, 0.9)) 
-            drop-shadow(0 0 70px rgba(236, 72, 153, 0.8));
-    letter-spacing: -0.03em;
-  }
-  84% {
-    opacity: 1;
-    transform: scale(1) translate3d(0, 0, 0);
-    filter: blur(0px) brightness(1.6) 
-            drop-shadow(0 0 35px rgba(6, 182, 212, 0.8));
-    letter-spacing: -0.04em;
-  }
-  /* Phase 3: 4.2s - 5.0s (84% to 100%) - 3D recoil / bounce settling */
-  90% {
-    transform: scale(1.05) translate3d(0, 0, 20px);
-    filter: blur(0px) brightness(1.3) 
-            drop-shadow(0 0 35px rgba(6, 182, 212, 0.7));
-  }
-  96% {
-    transform: scale(0.99) translate3d(0, 0, -5px);
-    filter: blur(0px) brightness(1.1);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translate3d(0, 0, 0);
-    filter: blur(0px) brightness(1) drop-shadow(0 0 30px rgba(6, 182, 212, 0.6));
-    letter-spacing: -0.05em;
-  }
+.chrono-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
 }
 
-/* Phase 2 Neon Flash & Light Pulse (3.5s - 4.2s) */
-@keyframes theater-flare-pulse {
-  0%, 65% {
-    opacity: 0;
-    transform: scale(0.1);
-  }
-  70% {
-    opacity: 1;
-    transform: scale(2.8);
-  }
-  78% {
-    opacity: 0.85;
-    transform: scale(2.4);
-  }
-  84% {
-    opacity: 0.3;
-    transform: scale(3.2);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(4.0);
-  }
+.chrono-seam {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  top: 48%;
+  height: 1px;
+  transform: translateY(-50%) scaleX(0);
+  transform-origin: 50% 50%;
+  background: linear-gradient(90deg, transparent, #22d3ee, #ffffff, #f472b6, transparent);
+  box-shadow: 0 0 12px #22d3ee;
+  pointer-events: none;
+  z-index: 1;
+  animation: chrono-seam 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-.cinematic-flyin-wrapper {
-  transform-style: preserve-3d;
-  animation: theater-5s-entrance 5.0s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
-  will-change: transform, opacity, filter;
+@keyframes chrono-seam {
+  0% { transform: translateY(-50%) scaleX(0); opacity: 0; }
+  22% { transform: translateY(-50%) scaleX(1); opacity: 1; }
+  100% { transform: translateY(-50%) scaleX(1); opacity: 0; }
+}
+
+.chrono-bloom {
+  position: absolute;
+  width: 240px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.7) 0%, rgba(34, 211, 238, 0.35) 34%, transparent 70%);
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0;
+  z-index: 5;
+}
+
+.chrono-bloom.is-firing {
+  animation: chrono-bloom 1.05s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes chrono-bloom {
+  0%, 55% { opacity: 0; transform: scale(0.4); }
+  68% { opacity: 0.7; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(1.8); }
+}
+
+.chrono-rig {
   position: relative;
 }
 
-.lens-flare-flash {
+.chrono-aura {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(3.4rem, 12vw, 8.5rem);
+  line-height: 0.9;
+  letter-spacing: 0.08em;
+  color: #67e8f9;
+  opacity: 0.22;
+  filter: blur(18px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.chrono-stage.is-locked .chrono-aura {
+  animation: chrono-aura 4.8s ease-in-out infinite alternate;
+}
+
+.chrono-word {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  font-size: clamp(3.4rem, 12vw, 8.5rem);
+  line-height: 0.9;
+  letter-spacing: 0.08em;
+  color: #f8fbff;
+  font-weight: 400;
+}
+
+.chrono-cell {
+  position: relative;
+  display: block;
+  width: 0.94em;
+  text-align: center;
+  flex: 0 0 0.94em;
+  overflow: visible;
+}
+
+.chrono-solid {
+  position: relative;
+  z-index: 2;
+  display: block;
+  text-shadow:
+    0 0 10px rgba(103, 232, 249, 0.45),
+    0 0 22px rgba(6, 182, 212, 0.25);
+  transition: color 0.04s step-start, text-shadow 0.04s step-start;
+}
+
+/* Scrambled cells: flash cyan-green like corrupted data */
+.chrono-cell.is-scrambled .chrono-solid,
+.chrono-solid.is-corrupt {
+  color: #a5f3fc;
+  text-shadow:
+    0 0 6px  #22d3ee,
+    0 0 18px #06b6d4,
+    0 0 36px rgba(6, 182, 212, 0.7),
+    2px 0 8px rgba(244, 114, 182, 0.5);
+}
+
+.chrono-ghost {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  transition: opacity 0.04s ease, transform 0.04s ease;
+}
+
+.chrono-ghost--c { color: #22d3ee; }
+.chrono-ghost--m { color: #f472b6; }
+
+/* During glitch: wider RGB split on ALL cells */
+.chrono-word.is-glitching .chrono-ghost--c {
+  opacity: 0.88;
+  transform: translateX(-6px);
+}
+
+.chrono-word.is-glitching .chrono-ghost--m {
+  opacity: 0.88;
+  transform: translateX(6px);
+}
+
+/* Scrambled cells: extra-wide split to make them pop */
+.chrono-cell.is-scrambled .chrono-ghost--c {
+  opacity: 1;
+  transform: translateX(-9px);
+}
+.chrono-cell.is-scrambled .chrono-ghost--m {
+  opacity: 1;
+  transform: translateX(9px);
+}
+
+/* Whole-word horizontal shake during glitch bursts */
+@keyframes chrono-word-shake {
+  0%   { transform: translate(0,      0)   skewX(0deg);   }
+  12%  { transform: translate(-3px,  1px)  skewX(-2deg);  }
+  25%  { transform: translate(4px,  -1px)  skewX(2.5deg); }
+  37%  { transform: translate(-2px,  2px)  skewX(-1deg);  }
+  50%  { transform: translate(3px,   0)    skewX(1.5deg); }
+  62%  { transform: translate(-4px, -1px)  skewX(-2deg);  }
+  75%  { transform: translate(2px,   1px)  skewX(1deg);   }
+  87%  { transform: translate(-1px,  0)    skewX(-0.5deg);}
+  100% { transform: translate(0,      0)   skewX(0deg);   }
+}
+
+.chrono-word.is-glitching {
+  animation: chrono-word-shake 0.12s steps(1, end) infinite;
+}
+
+.chrono-scan {
+  position: absolute;
+  inset: -8% -4%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 3;
+}
+
+.chrono-scan::before {
+  content: '';
+  position: absolute;
+  left: -28%;
+  top: -16%;
+  bottom: -16%;
+  width: 14%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  mix-blend-mode: overlay;
+  transform: skewX(-18deg);
+  opacity: 0;
+}
+
+.chrono-stage.is-locked .chrono-scan::before {
+  animation: chrono-scan 5.6s ease-in-out 0.4s infinite;
+}
+
+@keyframes chrono-scan {
+  0%, 72% { left: -28%; opacity: 0; }
+  78% { opacity: 0.7; }
+  100% { left: 118%; opacity: 0; }
+}
+
+.chrono-underline {
+  height: 1px;
+  margin: 0.45rem auto 0;
+  width: 68%;
+  transform: scaleX(0);
+  transform-origin: center;
+  background: linear-gradient(90deg, transparent, #22d3ee 22%, #fff 50%, #f472b6 78%, transparent);
+  box-shadow: 0 0 8px rgba(34, 211, 238, 0.55);
+  animation: chrono-underline 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.55s both;
+}
+
+@keyframes chrono-underline {
+  from { transform: scaleX(0); opacity: 0; }
+  to { transform: scaleX(1); opacity: 1; }
+}
+
+@keyframes chrono-aura {
+  0% { opacity: 0.16; }
+  100% { opacity: 0.3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chrono-seam,
+  .chrono-bloom,
+  .chrono-scan::before,
+  .chrono-underline,
+  .chrono-stage.is-locked .chrono-aura {
+    animation: none;
+  }
+  .chrono-underline { transform: scaleX(1); opacity: 1; }
+  .chrono-ghost { display: none; }
+}
+
+/* ==========================================================================
+   CRT TV Shutdown Transition Animation
+   ========================================================================== */
+
+/* 1. Underlying Screen Physical Vertical & Horizontal Collapse */
+.crt-screen-collapse {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  overflow: hidden !important;
+  z-index: 40 !important;
+  pointer-events: none !important;
+  transform-origin: 50% 50% !important;
+  animation: crtCollapseScreen 1.28s cubic-bezier(0.2, 0.9, 0.3, 1) forwards !important;
+  background-color: #05070c;
+}
+
+@keyframes crtCollapseScreen {
+  0% {
+    transform: scale(1, 1);
+    filter: brightness(1) contrast(1);
+    opacity: 1;
+  }
+  6% {
+    transform: scale(1, 1);
+    filter: brightness(1.3) contrast(1.15);
+    opacity: 1;
+  }
+  28% {
+    transform: scale(1, 0.003);
+    filter: brightness(3.2) contrast(2.2) drop-shadow(0 0 15px #00f0ff);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1, 0.003);
+    filter: brightness(3.5) contrast(2.5) drop-shadow(0 0 20px #06b6d4);
+    opacity: 1;
+  }
+  68% {
+    transform: scale(0.004, 0.003);
+    filter: brightness(4.5) contrast(3);
+    opacity: 1;
+  }
+  76% {
+    transform: scale(0.002, 0.002);
+    filter: brightness(3);
+    opacity: 0.8;
+  }
+  86% {
+    transform: scale(0, 0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(0, 0);
+    opacity: 0;
+  }
+}
+
+/* 2. Phosphor Horizontal Beam */
+.crt-beam-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  transform-origin: 50% 50%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(6, 182, 212, 0.85) 15%,
+    #00f0ff 35%,
+    #ffffff 50%,
+    #00f0ff 65%,
+    rgba(6, 182, 212, 0.85) 85%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 8px #ffffff,
+    0 0 20px #00f0ff,
+    0 0 45px #06b6d4,
+    0 0 90px rgba(0, 240, 255, 0.8),
+    0 0 160px rgba(6, 182, 212, 0.5);
+  animation: crtBeamAnimation 1.28s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+}
+
+@keyframes crtBeamAnimation {
+  0% {
+    opacity: 0;
+    transform: translateY(-50%) scaleX(1) scaleY(0);
+  }
+  7% {
+    opacity: 0.9;
+    transform: translateY(-50%) scaleX(1) scaleY(1.4);
+  }
+  12% {
+    opacity: 1;
+    transform: translateY(-50%) scaleX(1) scaleY(2);
+  }
+  28% {
+    opacity: 1;
+    transform: translateY(-50%) scaleX(1) scaleY(1.5);
+  }
+  48% {
+    opacity: 1;
+    transform: translateY(-50%) scaleX(1) scaleY(1.2);
+  }
+  54% {
+    opacity: 1;
+    transform: translateY(-50%) scaleX(0.92) scaleY(1.4);
+  }
+  67% {
+    opacity: 1;
+    transform: translateY(-50%) scaleX(0.003) scaleY(1.8);
+  }
+  69% {
+    opacity: 0;
+    transform: translateY(-50%) scaleX(0) scaleY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-50%) scaleX(0) scaleY(0);
+  }
+}
+
+/* 3. Phosphor Center Dot with Micro-Flicker Decay */
+.crt-center-dot {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 260px;
-  height: 260px;
-  margin-top: -130px;
-  margin-left: -130px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(6, 182, 212, 0.85) 30%, rgba(236, 72, 153, 0.6) 55%, transparent 75%);
-  pointer-events: none;
-  mix-blend-mode: screen;
-  animation: theater-flare-pulse 5.0s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
-  z-index: 20;
+  background-color: #ffffff;
+  box-shadow:
+    0 0 10px #ffffff,
+    0 0 22px #00f0ff,
+    0 0 50px #06b6d4,
+    0 0 95px rgba(0, 240, 255, 0.85);
+  animation: crtCenterDotAnimation 1.28s ease-out forwards;
 }
 
-.glitch-title {
-  position: relative;
-  display: inline-block;
-  /* Phase 4: Delay glitch activation until 5.0s post-entrance */
-  animation: glitch-skew 3s infinite linear alternate-reverse;
-  animation-delay: 5.0s;
+@keyframes crtCenterDotAnimation {
+  0%, 65% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  67% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.6);
+  }
+  71% {
+    opacity: 0.55;
+    transform: translate(-50%, -50%) scale(1.3);
+  }
+  74% {
+    opacity: 0.95;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  78% {
+    opacity: 0.35;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  82% {
+    opacity: 0.75;
+    transform: translate(-50%, -50%) scale(0.85);
+  }
+  86% {
+    opacity: 0.2;
+    transform: translate(-50%, -50%) scale(0.7);
+  }
+  90% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(0.55);
+  }
+  94% {
+    opacity: 0.12;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  97% {
+    opacity: 0.04;
+    transform: translate(-50%, -50%) scale(0.25);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
 }
 
-.glitch-title::before,
-.glitch-title::after {
-  content: attr(data-text);
+/* 4. CRT Ambient Flash & Phosphor Haze */
+.crt-ambient-flash {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0, 240, 255, 0.25) 0%, rgba(6, 182, 212, 0.08) 50%, transparent 80%);
+  animation: crtAmbientFlashAnimation 1.28s ease-out forwards;
+  pointer-events: none;
 }
 
-.glitch-title::before {
-  color: #06b6d4;
-  animation: glitch-anim-1 2.5s infinite linear alternate-reverse;
-  animation-delay: 5.0s;
-  z-index: -1;
-  opacity: 0;
-  animation-fill-mode: forwards;
+@keyframes crtAmbientFlashAnimation {
+  0% {
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.6;
+  }
+  16% {
+    opacity: 0.25;
+  }
+  30% {
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  67% {
+    opacity: 0.65;
+  }
+  74% {
+    opacity: 0.15;
+  }
+  85% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
-.glitch-title::after {
-  color: #ec4899;
-  animation: glitch-anim-2 2s infinite linear alternate-reverse;
-  animation-delay: 5.0s;
-  z-index: -2;
-  opacity: 0;
-  animation-fill-mode: forwards;
+/* 5. Scanlines overlay during CRT shutdown */
+.crt-shutdown-scanlines {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.45) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(0, 240, 255, 0.04),
+    rgba(0, 0, 0, 0),
+    rgba(6, 182, 212, 0.04)
+  );
+  background-size: 100% 4px, 8px 100%;
+  pointer-events: none;
+  animation: crtScanlineFlicker 1.28s steps(20) forwards;
 }
+
+@keyframes crtScanlineFlicker {
+  0% { opacity: 0.4; }
+  25% { opacity: 0.8; }
+  50% { opacity: 0.9; }
+  75% { opacity: 0.5; }
+  88% { opacity: 0.1; }
+  100% { opacity: 0; }
+}
+
+/* 6. CRT Vignette & Curvature Tube Frame */
+.crt-tube-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.92) 100%);
+  pointer-events: none;
+}
+
 

@@ -109,5 +109,24 @@ export const soundFx = {
       osc.start(now);
       osc.stop(now + 0.12);
     } catch (_) {}
+  },
+
+  // CRT TV power-off transition sound
+  playCrtShutdown() {
+    if (!soundEnabled) return null;
+    try {
+      const audio = new Audio('/sounds/CRT.mp3');
+      audio.volume = 0.35;
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          console.warn('Failed to autoplay CRT audio:', err);
+        });
+      }
+      return audio;
+    } catch (e) {
+      console.warn('Failed to play CRT audio:', e);
+      return null;
+    }
   }
 };
