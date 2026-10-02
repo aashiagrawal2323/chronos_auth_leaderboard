@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import api from '../services/api.js';
 import { soundFx } from '../utils/audio.js';
 
@@ -52,33 +52,42 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
-  // Sync server state for active team
+  // Keep a stable ref to team to avoid stale closures inside refreshGameState
+  const teamRef = useRef(team);
+  useEffect(() => { teamRef.current = team; }, [team]);
+
+  // Sync server state for active team — stable function, uses teamRef to avoid circular deps
   const refreshGameState = useCallback(async () => {
-    if (!team?.team_id && !team?.id) return null;
-    const tid = team.team_id || team.id;
+    const currentTeam = teamRef.current;
+    if (!currentTeam?.team_id && !currentTeam?.id) return null;
+    const tid = currentTeam.team_id || currentTeam.id;
     try {
       setLoadingState(true);
       const state = await api.getGameState(tid);
 
-      // If team doesn't exist on server (e.g. database re-initialized or test team removed)
-      if (!state || state.notFound) {
+      // Only log out if the server explicitly says the team doesn't exist (404)
+      // Do NOT log out on network errors or null responses — that would kick the user out on any hiccup
+      if (state?.notFound) {
         localStorage.removeItem('chronos_team_session');
         setTeam(null);
         setGameState(null);
         return null;
       }
 
+      // If state is null/undefined (network error), silently skip — keep team logged in
+      if (!state) return null;
+
       setGameState(state);
       // Update local team state if changed
-      if (state.current_state !== team.current_state) {
-        setTeam((prev) => ({
+      if (state.current_state !== currentTeam.current_state) {
+        setTeam((prev) => (prev ? {
           ...prev,
           current_state: state.current_state,
           round1_score: state.r1_score ?? state.round1_score,
           round2_score: state.r2_score ?? state.round2_score,
           round3_score: state.r3_score ?? state.round3_score,
           total_score: state.total_score,
-        }));
+        } : prev));
       }
       return state;
     } catch (err) {
@@ -87,13 +96,13 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoadingState(false);
     }
-  }, [team]);
+  }, []); // stable — uses teamRef internally
 
   useEffect(() => {
     if (team?.team_id || team?.id) {
       refreshGameState();
     }
-  }, [team?.team_id, team?.id, refreshGameState]);
+  }, [team?.team_id, team?.id]); // refreshGameState is now stable, no need to include it
 
   const loginTeamSession = (teamData) => {
     const normalized = {
@@ -109,7 +118,6 @@ export const AuthProvider = ({ children }) => {
       session_token: teamData.session_token || '',
     };
     setTeam(normalized);
-    soundFx.playAccessGranted();
   };
 
   const updateGameState = (partialState) => {

@@ -232,7 +232,7 @@ export default function HostLeaderboard({ hostPasskey = 'chronos2140', onExitHos
                 RESTRICTED ROUTE
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold font-tech text-white mt-1">
+            <h1 className="text-2xl sm:text-3xl font-normal font-title tracking-wide text-white mt-1">
               Project Chronos Master Leaderboard
             </h1>
             <p className="text-xs text-slate-400 font-mono mt-0.5">

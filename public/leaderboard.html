@@ -8,6 +8,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
+    @font-face {
+      font-family: 'Super Sliced';
+      src: url('/fonts/SuperSliced.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -26,6 +34,10 @@
 
     .font-tech {
       font-family: 'Chakra Petch', sans-serif;
+    }
+
+    .font-title {
+      font-family: 'Super Sliced', 'Chakra Petch', sans-serif;
     }
 
     /* Subtle CRT Scanlines & Cyber Grid */
@@ -90,9 +102,10 @@
     }
 
     .brand-title {
-      font-size: 17px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
+      font-family: 'Super Sliced', 'Chakra Petch', sans-serif;
+      font-size: 20px;
+      font-weight: normal;
+      letter-spacing: 2px;
       color: #fff;
     }
 
@@ -532,10 +545,9 @@
   <!-- Header -->
   <header>
     <div class="brand">
-      <div class="brand-logo">CH</div>
       <div>
         <div style="display: flex; align-items: center; gap: 8px;">
-          <span class="brand-title font-tech">PROJECT CHRONOS</span>
+          <span class="brand-title font-title">PROJECT CHRONOS</span>
           <span class="badge-host font-tech">HOST ONLY</span>
         </div>
         <div style="font-size: 10px; color: #64748b; margin-top: 2px;">

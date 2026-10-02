@@ -229,48 +229,63 @@ app.post('/api/auth/register', (req: Request, res: Response) => {
     const existing = db.prepare('SELECT * FROM teams WHERE team_name = ? COLLATE NOCASE').get(cleanTeam) as any;
 
     if (existing) {
+      // Check PRN credentials for both members
+      const dbP1 = (existing.member1_prn || '').trim().toLowerCase();
+      const dbP2 = (existing.member2_prn || '').trim().toLowerCase();
+      const inputP1 = p1.toLowerCase();
+      const inputP2 = p2.toLowerCase();
+
+      const prnsMatch = (inputP1 === dbP1 && inputP2 === dbP2) || (inputP1 === dbP2 && inputP2 === dbP1);
+
+      if (!prnsMatch) {
+        return res.status(409).json({
+          detail: 'Engineers have been already assigned with this Callsign name.',
+        });
+      }
+
+      // Both PRNs matched: Log in returning team without altering registered credentials
       db.prepare(`
-        UPDATE teams SET
-          member1_name = ?,
-          member2_name = ?,
-          member1_prn = ?,
-          member2_prn = ?,
-          updated_at = ?
-        WHERE team_id = ?
-      `).run(m1, m2, p1, p2, nowIso, existing.team_id);
+        UPDATE teams SET updated_at = ? WHERE team_id = ?
+      `).run(nowIso, existing.team_id);
 
       db.prepare('INSERT INTO game_logs (team_id, event_type, event_data, created_at) VALUES (?, ?, ?, ?)')
-        .run(existing.team_id, 'REGISTER_RESUME', JSON.stringify({ team_name: cleanTeam, prns: [p1, p2] }), nowIso);
+        .run(existing.team_id, 'LOGIN_SUCCESS', JSON.stringify({ team_name: cleanTeam, prns: [p1, p2] }), nowIso);
 
       return res.json({
         team_id: existing.team_id,
         team_name: existing.team_name,
-        member1_name: m1,
-        member2_name: m2,
-        member1_prn: p1,
-        member2_prn: p2,
+        member1_name: existing.member1_name,
+        member2_name: existing.member2_name,
+        member1_prn: existing.member1_prn,
+        member2_prn: existing.member2_prn,
         status: existing.status,
         session_token: sessionToken,
-        message: 'SESSION_RESTORED',
+        message: 'LOGIN_SUCCESS',
       });
     }
 
-    const insertResult = db.prepare(`
+    // New Team Registration: Sequential ID assignment
+    const maxRow = db.prepare('SELECT COALESCE(MAX(team_id), 0) AS max_id FROM teams').get() as any;
+    const nextId = Number(maxRow.max_id) + 1;
+
+    db.prepare(`
       INSERT INTO teams (
-        team_name, member1_name, member2_name, member1_prn, member2_prn,
+        team_id, team_name, member1_name, member2_name, member1_prn, member2_prn,
         r1_start_time, r1_end_time, r1_time_diff,
         r1_score, r1_scaled, r2_score, r3_score, total_score,
         status, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, NULL, NULL, NULL, 0.0, 0.0, 0.0, 0.0, 0.0, 'ACTIVE', ?, ?)
-    `).run(cleanTeam, m1, m2, p1, p2, nowIso, nowIso);
+      ) VALUES (?, ?, ?, ?, ?, ?, NULL, NULL, NULL, 0.0, 0.0, 0.0, 0.0, 0.0, 'ACTIVE', ?, ?)
+    `).run(nextId, cleanTeam, m1, m2, p1, p2, nowIso, nowIso);
 
-    const newId = Number(insertResult.lastInsertRowid);
+    try {
+      db.prepare("UPDATE sqlite_sequence SET seq = (SELECT MAX(team_id) FROM teams) WHERE name = 'teams'").run();
+    } catch (_) {}
 
     db.prepare('INSERT INTO game_logs (team_id, event_type, event_data, created_at) VALUES (?, ?, ?, ?)')
-      .run(newId, 'REGISTER_NEW', JSON.stringify({ team_name: cleanTeam, prns: [p1, p2] }), nowIso);
+      .run(nextId, 'REGISTER_NEW', JSON.stringify({ team_name: cleanTeam, prns: [p1, p2] }), nowIso);
 
     return res.json({
-      team_id: newId,
+      team_id: nextId,
       team_name: cleanTeam,
       member1_name: m1,
       member2_name: m2,
